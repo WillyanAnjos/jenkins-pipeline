@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "api-financeiro"
-        IMAGE_TAG = "latest"
+        // Nome do jar gerado pelo Maven (ajuste se necessário)
+        JAR_NAME = "jenkins-0.0.1-SNAPSHOT.jar"
     }
 
     stages {
@@ -25,20 +25,11 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Run API Locally') {
             steps {
-                sh "docker build -t $IMAGE_NAME:$IMAGE_TAG ."
-            }
-        }
-
-        stage('Deploy API') {
-            steps {
-                sh "docker stop api-financeiro || true && docker rm api-financeiro || true"
-                sh "docker run -d --name api-financeiro -p 8081:8080 $IMAGE_NAME:$IMAGE_TAG"
+                // Para rodar em background e logar em arquivo
+                sh "nohup java -jar target/$JAR_NAME > api.log 2>&1 &"
             }
         }
     }
 }
-
-
-

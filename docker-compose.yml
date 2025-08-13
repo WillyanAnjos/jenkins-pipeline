@@ -11,20 +11,6 @@ services:
       - 50000:50000
     volumes:
       - jenkins_home:/var/jenkins_home
-    environment:
-      - DOCKER_HOST=tcp://docker:2375
-
-  docker:
-    container_name: docker
-    image: docker:dind
-    privileged: true
-    environment:
-      - DOCKER_TLS_CERTDIR=
-    ports:
-      - 2375:2375
-    volumes:
-      - jenkins_home:/var/jenkins_home
-    command: --tls=false
 
 volumes:
   jenkins_home:
