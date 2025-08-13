@@ -15,8 +15,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'git@github.com:seu-usuario/seu-repo-privado.git',
-                    credentialsId: 'github-ssh'
+                    url: 'https://github.com/WillyanAnjos/jenkins-pipeline.git'
             }
         }
 
