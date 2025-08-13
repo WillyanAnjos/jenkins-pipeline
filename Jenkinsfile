@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-        // Nome do jar gerado pelo Maven (ajuste se necessário)
-        JAR_NAME = "jenkins-0.0.1-SNAPSHOT.jar"
+        JAR_NAME = "jenkins-0.0.1-SNAPSHOT.jar"  // Ajuste para seu jar
+        WORKSPACE_HOST = "/workspace"           // Caminho compartilhado com host
     }
 
     stages {
@@ -25,10 +25,20 @@ pipeline {
             }
         }
 
-        stage('Run API Locally') {
+        stage('Copy Jar to Host') {
             steps {
-                // Para rodar em background e logar em arquivo
-                sh "nohup java -jar target/$JAR_NAME > api.log 2>&1 &"
+                // Copia o jar para o diretório compartilhado com o host
+                sh "cp target/$JAR_NAME $WORKSPACE_HOST/"
+            }
+        }
+
+        stage('Restart API on Host') {
+            steps {
+                // Mata a API antiga, se estiver rodando, e inicia a nova
+                sh """
+                    pkill -f $WORKSPACE_HOST/$JAR_NAME || true
+                    nohup java -jar $WORKSPACE_HOST/$JAR_NAME > $WORKSPACE_HOST/api.log 2>&1 &
+                """
             }
         }
     }
