@@ -10,6 +10,6 @@ public class PagamentoController {
 	
 	@GetMapping
 	public String status() {
-		return "Pagamento service is running!";
+		return "Deu certo pow";
 	}
 }
