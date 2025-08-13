@@ -33,13 +33,19 @@ pipeline {
         }
 
         stage('Restart API on Host') {
-            steps {
-                // Mata a API antiga, se estiver rodando, e inicia a nova
-                sh """
-                    pkill -f $WORKSPACE_HOST/$JAR_NAME || true
-                    nohup java -jar $WORKSPACE_HOST/$JAR_NAME > $WORKSPACE_HOST/api.log 2>&1 &
-                """
-            }
-        }
+		    steps {
+		        sh """
+		            # Para a API antiga (ignora se não existir)
+		            pkill -f /workspace/jenkins-0.0.1-SNAPSHOT.jar || true
+		
+		            # Aguarda 2 segundos para garantir que o processo foi morto
+		            sleep 2
+		
+		            # Inicia a nova versão
+		            nohup java -jar /workspace/jenkins-0.0.1-SNAPSHOT.jar > /workspace/api.log 2>&1 &
+		        """
+		    }
+		}
+
     }
 }
