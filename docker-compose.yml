@@ -7,11 +7,12 @@ services:
     user: root
     privileged: true
     ports:
-      - 8080:8080
-      - 50000:50000
+      - 8080:8080     # Jenkins
+      - 50000:50000   # JNLP
+      - 8081:8081     # API Spring Boot
     volumes:
       - jenkins_home:/var/jenkins_home
-      - ./workspace:/workspace   # <- diretório compartilhado com o host
+      - ./workspace:/workspace   # diretório compartilhado com o host
 
 volumes:
   jenkins_home:
