@@ -10,6 +10,6 @@ public class PagamentoController {
 	
 	@GetMapping
 	public String status() {
-		return "Deu certo pow";
+		return "Willyan - Pagamento OK";
 	}
 }
