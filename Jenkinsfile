@@ -33,19 +33,30 @@ pipeline {
         }
 
         stage('Restart API on Host') {
-		    steps {
-		        sh """
-		            # Para a API antiga (ignora se não existir)
-		            pkill -f /workspace/jenkins-0.0.1-SNAPSHOT.jar || true
-		
-		            # Aguarda 2 segundos para garantir que o processo foi morto
-		            sleep 2
-		
-		            # Inicia a nova versão
-		            nohup java -jar /workspace/jenkins-0.0.1-SNAPSHOT.jar > /workspace/api.log 2>&1 &
-		        """
-		    }
-		}
+            steps {
+                sh """
+                    echo "Matando processo antigo (se existir)..."
+                    pkill -f /workspace/$JAR_NAME || true
 
+                    echo "Aguardando 5 segundos para garantir que o processo antigo terminou..."
+                    sleep 5
+
+                    echo "Iniciando nova versão da API..."
+                    nohup java -jar /workspace/$JAR_NAME > /workspace/api.log 2>&1 &
+                    disown
+
+                    echo "API reiniciada com sucesso!"
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline finalizado com sucesso!"
+        }
+        failure {
+            echo "Pipeline falhou!"
+        }
     }
 }
