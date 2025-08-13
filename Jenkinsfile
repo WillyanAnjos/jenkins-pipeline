@@ -33,20 +33,28 @@ pipeline {
         }
 
         stage('Restart API on Host') {
+		    steps {
+		        sh '''
+		            bash -c "
+		                echo 'Matando processo antigo (se existir)...'
+		                pkill -f /workspace/$JAR_NAME || true
+		
+		                echo 'Aguardando 5 segundos para garantir que o processo antigo terminou...'
+		                sleep 5
+		
+		                echo 'Iniciando nova versão da API...'
+		                nohup java -jar /workspace/$JAR_NAME > /workspace/api.log 2>&1 &
+		                disown
+		
+		                echo 'API reiniciada com sucesso!'
+		            "
+		        '''
+		    }
+		}
+        stage('Test API') {
             steps {
-                sh """
-                    echo "Matando processo antigo (se existir)..."
-                    pkill -f /workspace/$JAR_NAME || true
-
-                    echo "Aguardando 5 segundos para garantir que o processo antigo terminou..."
-                    sleep 5
-
-                    echo "Iniciando nova versão da API..."
-                    nohup java -jar /workspace/$JAR_NAME > /workspace/api.log 2>&1 &
-                    disown
-
-                    echo "API reiniciada com sucesso!"
-                """
+                // Aqui você pode adicionar testes para verificar se a API está funcionando corretamente
+                sh 'curl -f http://localhost:8080/api/health || exit 1'
             }
         }
     }
